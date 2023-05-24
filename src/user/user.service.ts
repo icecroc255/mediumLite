@@ -8,7 +8,7 @@ export class UserService {
     async getAllUsers(limit?: number, offset?: number) {
         const users = await this.prisma.user.findMany({ 
             take: limit,
-            skip: offset
+            skip: offset,
         });
 
         if (!users) {

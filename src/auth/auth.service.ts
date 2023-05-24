@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from "@nestjs/common";
+import { ForbiddenException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { AuthDto } from "./dto";
 import * as argon from 'argon2';
@@ -37,7 +37,7 @@ export class AuthService {
         const user = await this.prisma.user.findUnique({ where: { email: dto.email }})
 
         if (!user) {
-            throw new ForbiddenException('Credentials incorrect')
+            throw new UnauthorizedException('Credentials incorrect')
         }
 
         const passwordMatches = await argon.verify(user.password, dto.password);
