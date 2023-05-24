@@ -33,13 +33,24 @@ export class PostService {
             throw new ForbiddenException('Post with the same title already exists')
         }
 
+        const readingTime = await this.calculateReadingTime(dto.content);
+
         const post = await this.prisma.post.create({
             data: {
                 authorId: userId,
+                readingTime: readingTime,
                 ...dto
             },
         });
 
         return post;
+    }
+
+    private async calculateReadingTime(content: string): Promise<number> {
+        const wordsPerMinute = 240;
+        const words = content.split(' ').length;
+        const readingTime = Math.ceil(words / wordsPerMinute);
+
+        return readingTime;
     }
 }
