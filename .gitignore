@@ -39,4 +39,4 @@ lerna-debug.log*
 
 #Migrations and DB
 migrations
-.db
+*.db
