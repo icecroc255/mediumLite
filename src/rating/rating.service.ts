@@ -1,11 +1,13 @@
 import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { SetRateDto } from './dto';
 
 @Injectable()
 export class RatingService {
     constructor(private prisma: PrismaService) {}
 
-    async setRateToPost(userId: number, postId: number, rate: number) {
+    async setRateToPost(userId: number, dto: SetRateDto) {
+        const { postId, rate } = dto;
         const existingRate = await this.prisma.postRating.findUnique({
             where: {
                 postId_userId: {
@@ -15,10 +17,9 @@ export class RatingService {
         })
 
         if (existingRate) {
-            throw new ConflictException(`You have already set the rate to post ${postId}`);
-        }
-
-        const postRating = await this.prisma.postRating.create({
+            return `You have already set the rate to post ${postId}`;
+        } else {
+            const postRating = await this.prisma.postRating.create({
             data: {
                 postId: postId,
                 userId: userId,
@@ -27,6 +28,9 @@ export class RatingService {
         });
 
         return postRating;
+        }
+
+        
     }
 
     async getPostRating(postId: number) {
@@ -37,7 +41,7 @@ export class RatingService {
             where: { postId: postId },
         })
 
-        if (!existingRate) {
+        if (existingRate._avg.rate === null) {
             throw new NotFoundException(`Post ${postId} don't have a rating yet`);
         }
 
@@ -54,7 +58,7 @@ export class RatingService {
             }}
         })
 
-        if (!userRating) {
+        if (userRating._avg.rate === null) {
             throw new NotFoundException(`User ${userId} don't have a rating yet`);
         }
 

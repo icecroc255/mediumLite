@@ -2,6 +2,7 @@ import { Body, Controller, Get, Param, ParseIntPipe, Post, Query, UseGuards } fr
 import { JwtGuard } from 'src/auth/guard';
 import { RatingService } from './rating.service';
 import { GetUser } from 'src/auth/decorator';
+import { SetRateDto } from './dto';
 
 @UseGuards(JwtGuard)
 @Controller('rating')
@@ -11,10 +12,9 @@ export class RatingController {
     @Post()
     setRateToPost(
         @GetUser('id') userId: number,
-        @Query('postId', ParseIntPipe) postId: number,
-        @Query('rate', ParseIntPipe) rate: number,
+        @Body() dto: SetRateDto
     ) {
-        return this.ratingService.setRateToPost(userId, postId, rate);
+        return this.ratingService.setRateToPost(userId, dto);
     }
 
     @Get()
