@@ -9,12 +9,12 @@ export class RatingController {
     constructor(private ratingService: RatingService) {}
 
     @Post()
-    setRatingToPost(
+    setRateToPost(
         @GetUser('id') userId: number,
         @Query('postId', ParseIntPipe) postId: number,
         @Query('rate', ParseIntPipe) rate: number,
     ) {
-        return this.ratingService.setRatingToPost(userId, postId, rate);
+        return this.ratingService.setRateToPost(userId, postId, rate);
     }
 
     @Get()

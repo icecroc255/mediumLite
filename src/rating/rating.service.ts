@@ -1,11 +1,11 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class RatingService {
     constructor(private prisma: PrismaService) {}
 
-    async setRatingToPost(userId: number, postId: number, rate: number) {
+    async setRateToPost(userId: number, postId: number, rate: number) {
         const existingRate = await this.prisma.postRating.findUnique({
             where: {
                 postId_userId: {
@@ -15,7 +15,7 @@ export class RatingService {
         })
 
         if (existingRate) {
-            throw new ForbiddenException(`You have already set the rate to post ${postId}`);
+            throw new ConflictException(`You have already set the rate to post ${postId}`);
         }
 
         const postRating = await this.prisma.postRating.create({
